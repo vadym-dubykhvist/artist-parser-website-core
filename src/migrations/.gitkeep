@@ -1,0 +1,2 @@
+# This directory will contain TypeORM migrations
+# Generate migrations with: npm run migration:generate -- src/migrations/MigrationName

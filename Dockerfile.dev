@@ -1,0 +1,22 @@
+# Development Dockerfile
+ARG NODE_VERSION="18.12.1"
+ARG ALPINE_VERSION="3.17"
+
+FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION}
+
+# Install OpenSSL 1.1.x for compatibility
+RUN apk update && apk add openssl1.1-compat
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install all dependencies (including dev dependencies)
+RUN npm install
+
+# Expose port
+EXPOSE 3000
+
+# Start command - TypeORM will auto-sync in development mode
+CMD ["npm", "run", "dev"]
