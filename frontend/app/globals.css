@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+:root {
+  --deep-teal: #1F313B;
+  --navy: #383852;
+  --mauve: #784259;
+  --rose: #B94E56;
+  --brick: #BE4039;
+  --burgundy: #683536;
+}
+
+@theme {
+  --color-deep-teal: #1F313B;
+  --color-navy: #383852;
+  --color-mauve: #784259;
+  --color-rose: #B94E56;
+  --color-brick: #BE4039;
+  --color-burgundy: #683536;
+}
+
+body {
+  background-color: #1F313B;
+  color: #e8ddd6;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}

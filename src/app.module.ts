@@ -4,7 +4,17 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { User } from './entities/user.entity';
+import { Artist } from './entities/artist.entity';
+import { Track } from './entities/track.entity';
+import { ShortLink } from './entities/short-link.entity';
 import { AuthModule } from './auth/auth.module';
+import { ArtistModule } from './artist/artist.module';
+import { TrackModule } from './track/track.module';
+import { ShortLinkModule } from './short-link/short-link.module';
+import { SpotifyModule } from './spotify/spotify.module';
+import { YoutubeModule } from './youtube/youtube.module';
+import { AppleMusicModule } from './apple-music/apple-music.module';
+import { MusicSyncModule } from './music-sync/music-sync.module';
 
 @Module({
   imports: [
@@ -17,7 +27,6 @@ import { AuthModule } from './auth/auth.module';
       useFactory: (configService: ConfigService) => {
         const isProduction = configService.get('NODE_ENV') === 'production';
 
-        // Validate required database credentials - no fallbacks
         const dbHost = configService.get<string>('DB_HOST');
         const dbPort = configService.get<string>('DB_PORT');
         const dbUser = configService.get<string>('DB_USER');
@@ -37,7 +46,7 @@ import { AuthModule } from './auth/auth.module';
           username: dbUser,
           password: dbPassword,
           database: dbName,
-          entities: [User],
+          entities: [User, Artist, Track, ShortLink],
           synchronize: !isProduction,
           logging: !isProduction,
         };
@@ -46,6 +55,13 @@ import { AuthModule } from './auth/auth.module';
     }),
     TypeOrmModule.forFeature([User]),
     AuthModule,
+    ArtistModule,
+    TrackModule,
+    ShortLinkModule,
+    SpotifyModule,
+    YoutubeModule,
+    AppleMusicModule,
+    MusicSyncModule,
   ],
   controllers: [AppController],
   providers: [AppService],

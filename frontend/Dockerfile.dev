@@ -1,0 +1,8 @@
+FROM node:20-alpine
+WORKDIR /app
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Dependencies installed at runtime via volume + command in docker-compose
+EXPOSE 3001
+
+CMD ["sh", "-c", "npm install && npm run dev -- -p 3001"]

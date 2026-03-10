@@ -30,24 +30,23 @@ services:
     ports:
       - "${APP_PORT:-3000}:3000"
     environment:
-      # TypeORM Database Configuration
       DB_HOST: postgres
       DB_PORT: ${POSTGRES_PORT:-5432}
       DB_USER: ${POSTGRES_USER:-postgres}
       DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       DB_NAME: ${POSTGRES_DB:-artist_parser_db}
-      # Docker Compose variables (for reference)
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       POSTGRES_DB: ${POSTGRES_DB:-artist_parser_db}
       POSTGRES_PORT: ${POSTGRES_PORT:-5432}
-      # App Configuration
       NODE_ENV: development
-      # JWT Configuration
       JWT_SECRET: ${JWT_SECRET}
-      # Admin User Configuration
       ADMIN_EMAIL: ${ADMIN_EMAIL}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      SPOTIFY_CLIENT_ID: ${SPOTIFY_CLIENT_ID}
+      SPOTIFY_CLIENT_SECRET: ${SPOTIFY_CLIENT_SECRET}
+      YOUTUBE_API_KEY: ${YOUTUBE_API_KEY}
+      FRONTEND_URL: http://localhost:3001,http://localhost:3002
     volumes:
       - .:/app
       - /app/node_modules
@@ -56,8 +55,40 @@ services:
         condition: service_healthy
     networks:
       - app-network
-    # Ensure dependencies are installed after volume mount
     command: sh -c "npm install && npm run dev"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: artist-parser-frontend-dev
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-3001}:3001"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:3000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - app
+    networks:
+      - app-network
+    command: sh -c "npm install && npm run dev -- -p 3001"
+
+  flutter-web:
+    build:
+      context: ./mobile
+      dockerfile: Dockerfile.web
+    container_name: artist-parser-flutter-web
+    restart: unless-stopped
+    ports:
+      - "3002:80"
+    depends_on:
+      - app
+    networks:
+      - app-network
 
 volumes:
   postgres_data_dev:
