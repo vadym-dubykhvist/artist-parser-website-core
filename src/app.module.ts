@@ -15,6 +15,7 @@ import { SpotifyModule } from './spotify/spotify.module';
 import { YoutubeModule } from './youtube/youtube.module';
 import { AppleMusicModule } from './apple-music/apple-music.module';
 import { MusicSyncModule } from './music-sync/music-sync.module';
+import { ResolveModule } from './resolve/resolve.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { MusicSyncModule } from './music-sync/music-sync.module';
     YoutubeModule,
     AppleMusicModule,
     MusicSyncModule,
+    ResolveModule,
   ],
   controllers: [AppController],
   providers: [AppService],

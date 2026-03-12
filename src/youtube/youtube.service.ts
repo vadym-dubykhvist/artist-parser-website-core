@@ -12,6 +12,32 @@ export class YoutubeService {
     private readonly config: ConfigService,
   ) {}
 
+  async getVideoMetadata(
+    videoId: string,
+  ): Promise<{ title: string; channelTitle: string } | null> {
+    const apiKey = this.config.get<string>('YOUTUBE_API_KEY');
+    if (!apiKey) {
+      this.logger.warn('YOUTUBE_API_KEY is not set, skipping video metadata');
+      return null;
+    }
+    try {
+      const { data } = await firstValueFrom(
+        this.http.get('https://www.googleapis.com/youtube/v3/videos', {
+          params: { id: videoId, part: 'snippet', key: apiKey },
+        }),
+      );
+      const item = data.items?.[0];
+      if (!item) return null;
+      return {
+        title: item.snippet.title as string,
+        channelTitle: item.snippet.channelTitle as string,
+      };
+    } catch (err) {
+      this.logger.error(`YouTube video metadata failed for "${videoId}": ${err.message}`);
+      return null;
+    }
+  }
+
   async findTrackUrl(
     artistName: string,
     trackTitle: string,

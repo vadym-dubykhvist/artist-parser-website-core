@@ -12,6 +12,7 @@ class Track {
   final String? releaseDate;
   final int? duration;
   final List<ShortLink> shortLinks;
+  final String? artistName;
 
   const Track({
     required this.id,
@@ -25,6 +26,7 @@ class Track {
     this.releaseDate,
     this.duration,
     this.shortLinks = const [],
+    this.artistName,
   });
 
   factory Track.fromJson(Map<String, dynamic> json) => Track(
@@ -41,5 +43,6 @@ class Track {
         shortLinks: (json['shortLinks'] as List<dynamic>? ?? [])
             .map((s) => ShortLink.fromJson(s as Map<String, dynamic>))
             .toList(),
+        artistName: (json['artist'] as Map<String, dynamic>?)?['name'] as String?,
       );
 }

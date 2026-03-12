@@ -19,6 +19,11 @@ export interface SpotifyTrack {
   spotifyUrl: string;
 }
 
+export interface SpotifyTrackFull extends SpotifyTrack {
+  artistName: string | null;
+  artistSpotifyId: string | null;
+}
+
 @Injectable()
 export class SpotifyService {
   private readonly logger = new Logger(SpotifyService.name);
@@ -144,6 +149,25 @@ export class SpotifyService {
         releaseDate: track.album?.release_date ?? null,
         spotifyUrl: track.external_urls?.spotify ?? null,
       }));
+  }
+
+  async getTrackById(trackId: string): Promise<SpotifyTrackFull> {
+    const token = await this.getToken();
+    const { data } = await firstValueFrom(
+      this.http.get(`https://api.spotify.com/v1/tracks/${trackId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    );
+    return {
+      title: data.name,
+      isrc: data.external_ids?.isrc ?? null,
+      coverUrl: data.album?.images?.[0]?.url ?? null,
+      duration: data.duration_ms,
+      releaseDate: data.album?.release_date ?? null,
+      spotifyUrl: data.external_urls?.spotify ?? null,
+      artistName: data.artists?.[0]?.name ?? null,
+      artistSpotifyId: data.artists?.[0]?.id ?? null,
+    };
   }
 
   async getArtistAllTracks(spotifyId: string): Promise<SpotifyTrack[]> {

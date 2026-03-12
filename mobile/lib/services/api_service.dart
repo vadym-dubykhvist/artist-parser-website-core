@@ -29,4 +29,13 @@ class ApiService {
     if (response.statusCode != 200) throw Exception('Failed to load track');
     return Track.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
   }
+
+  static Future<Track> findTrackByUrl(String url) async {
+    final uri = Uri.parse('${AppConfig.apiBaseUrl}/resolve')
+        .replace(queryParameters: {'url': url});
+    // longer timeout — backend searches across multiple platforms
+    final response = await http.get(uri).timeout(const Duration(seconds: 30));
+    if (response.statusCode != 200) throw Exception('Track not found');
+    return Track.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+  }
 }
